@@ -5,11 +5,11 @@ const {getAccountDetails,getAllUserAccounts,createAccount,deleteAccount,updateAc
 
 router.post("/create",createAccount);
 
-router.patch("/:accountId/updateMoney",deleteAccount);
+router.patch("/:accountId/updateMoney",updateAccount);
 
 router.get("/:accountId",getAccountDetails);
 
-router.delete("/:accountId",updateAccount);
+router.delete("/:accountId",deleteAccount);
 
 router.get("/",getAllUserAccounts);
 
