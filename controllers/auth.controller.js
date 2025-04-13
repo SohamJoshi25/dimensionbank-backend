@@ -11,16 +11,32 @@ const login = async (req,res) => {
             return;
         }
         const { email } = req.body; 
+
         if(!email){
             res.status(400).json({ message: "Email is Requried in Body" });
             return;
         }
+
+        const query_result = await pool.query(
+            `SELECT name,date_of_creation FROM users WHERE email = ($1);`,
+            [email]
+          );
+
+        const record = otpStore.get(email);
+
+        const name = query_result.rows[0] ? query_result.rows[0].name : "";
+        const date_of_creation = query_result.rows[0] ? query_result.rows[0].date_of_creation : "";
+
+        if(record && Date.now() < record.expires){
+           return res.status(200).json({ message: "OTP already generated" , name:name, date_of_creation:date_of_creation});
+        }
+
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         otpStore.set(email, { otp, expires: Date.now() + 5 * 60 * 1000 }); // 5 min expiry
       
         try {
           await sendOtpMail(email, otp);
-          res.status(200).json({ message: "OTP sent to email" });
+          res.status(200).json({ message: "OTP sent to email" , name:name, date_of_creation:date_of_creation});
         } catch (err) {
           res.status(500).json({ message: "Failed to send OTP" });
         }

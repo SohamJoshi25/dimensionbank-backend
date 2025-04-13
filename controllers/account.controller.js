@@ -39,11 +39,16 @@ const getAllUserAccounts = async (req, res) => {
         }
         const token = authHeader.split(" ")[1];
 
+        
+
         const decoded = verifyJWT(token);
         const userId = decoded.id;
 
+        const result = await pool.query(`SELECT * FROM users WHERE id = $1`, [userId]);
+
         const { rows } = await pool.query(`SELECT * FROM accounts WHERE user_id = $1`, [userId]);
-        return res.status(200).json(rows);
+        return res.status(200).json({accounts:rows,user:result.rows[0]});
+
     } catch (err) {
         if (err.name === "TokenExpiredError") {
             return res.status(401).json({ message: "Token expired" });
