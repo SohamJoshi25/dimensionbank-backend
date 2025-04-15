@@ -47,6 +47,7 @@ const getAllUserAccounts = async (req, res) => {
         const result = await pool.query(`SELECT * FROM users WHERE id = $1`, [userId]);
 
         const { rows } = await pool.query(`SELECT * FROM accounts WHERE user_id = $1`, [userId]);
+        console.log(rows,result)
         return res.status(200).json({accounts:rows,user:result.rows[0]});
 
     } catch (err) {

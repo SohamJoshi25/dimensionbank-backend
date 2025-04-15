@@ -63,7 +63,7 @@ const twofa = async (req,res) => {
         
         if(query_result.rows[0]){
 
-            const token = createJWT({data:query_result.rows[0].id});
+            const token = createJWT({id:query_result.rows[0].id});
             otpStore.delete(email);
             return res.status(200).json({ message: "OTP verified. Login successful!", token:token });
 
